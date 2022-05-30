@@ -60,6 +60,11 @@ class GameFragment : Fragment() {
             binding.wordText.text = newWord
         })
 
+        viewModel.eventGameFinish.observe(viewLifecycleOwner, Observer { hasFinished ->
+            if (hasFinished) onEndGame()        // Fragment 가 다시 생성(rotate) 될 때 (inactive -> active) viewModel 과 다시 연결되면서 호출 발생
+            Log.d("GameFragment", "$hasFinished")
+        })
+
         return binding.root
     }
 
@@ -86,5 +91,6 @@ class GameFragment : Fragment() {
         val action = GameFragmentDirections.actionGameToScore()
         action.score = viewModel.score.value ?: 0
         NavHostFragment.findNavController(this).navigate(action)
+        viewModel.onGameFinishComplete()
     }
 }
