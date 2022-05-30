@@ -20,10 +20,11 @@ class GameViewModel : ViewModel(){
     }
 
     init{
-        resetList()
-        nextWord()
         word.value = ""
         score.value = 0
+
+        resetList()
+        nextWord()
     }
 
     /**
