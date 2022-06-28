@@ -36,21 +36,16 @@ import com.example.android.guesstheword.databinding.GameFragmentBinding
 class GameFragment : Fragment() {
 
     private lateinit var viewModel: GameViewModel
-
-
     private lateinit var binding: GameFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
         // Inflate view and obtain an instance of the binding class
         binding = DataBindingUtil.inflate(inflater, R.layout.game_fragment, container, false)
 
         Log.i("GameFragment", "Called ViewModelProvider.get")
         viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
 
-        binding.correctButton.setOnClickListener { onCorrect() }
-        binding.skipButton.setOnClickListener { onSkip() }
-        binding.endGameButton.setOnClickListener { onEndGame() }
+        binding.gameViewModel = viewModel
 
         viewModel.score.observe(viewLifecycleOwner, Observer { newScore ->
             binding.scoreText.text = newScore.toString()
@@ -61,27 +56,12 @@ class GameFragment : Fragment() {
         })
 
         viewModel.eventGameFinish.observe(viewLifecycleOwner, Observer { hasFinished ->
-            if (hasFinished) onEndGame()        // Fragment 가 다시 생성(rotate) 될 때 (inactive -> active) viewModel 과 다시 연결되면서 호출 발생
+            if (hasFinished) gameFinished()        // Fragment 가 다시 생성(rotate) 될 때 (inactive -> active) viewModel 과 다시 연결되면서 호출 발생
             Log.d("GameFragment", "$hasFinished")
         })
 
         return binding.root
     }
-
-    /** Methods for buttons presses **/
-
-    private fun onSkip() {
-        viewModel.onSkip()
-    }
-
-    private fun onCorrect() {
-        viewModel.onCorrect()
-    }
-
-    private fun onEndGame(){
-        gameFinished()
-    }
-
 
     /**
      * Called when the game is finished
