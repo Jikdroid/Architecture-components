@@ -68,6 +68,21 @@
             tools:text="&quot;Tuna&quot;" />
 
         <TextView
+            android:id="@+id/hintWord"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="44dp"
+            android:gravity="center"
+            android:text="@{gameViewModel.wordHint}"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/timer_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/word_text"
+            tools:text="Current Word has 6 letters The letter at position 4 is N" />
+
+        <TextView
             android:id="@+id/timer_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
