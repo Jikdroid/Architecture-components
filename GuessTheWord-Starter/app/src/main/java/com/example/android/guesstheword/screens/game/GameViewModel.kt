@@ -1,5 +1,6 @@
 package com.example.android.guesstheword.screens.game
 
+import android.os.CountDownTimer
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -25,6 +26,15 @@ class GameViewModel : ViewModel(){
     // The list of words - the front of the list is the next word to guess
     private lateinit var wordList: MutableList<String>
 
+
+    // countdown time
+    private val _currentTime = MutableLiveData<Long>()
+    val currentTime: LiveData<Long>
+        get() = _currentTime
+
+    private val timer: CountDownTimer
+
+
     private fun resetList() {
         wordList = mutableListOf("queen", "hospital", "basketball", "cat", "change", "snail", "soup", "calendar", "sad", "desk", "guitar", "home", "railway", "zebra", "jelly", "car", "crow", "trade", "bag", "roll", "bubble")
         wordList.shuffle()
@@ -36,6 +46,19 @@ class GameViewModel : ViewModel(){
 
         resetList()
         nextWord()
+
+        // Creates a timer which triggers the end of the game when it finishes
+        timer = object :CountDownTimer(COUNTDOWN_TIME, ONE_SECOND){
+            override fun onTick(millisUntilFinished: Long) {
+                _currentTime.value = millisUntilFinished / ONE_SECOND
+            }
+
+            override fun onFinish() {
+                _currentTime.value= DONE
+                onGameFinish()
+            }
+        }
+        timer.start()
     }
 
     /**
@@ -45,8 +68,9 @@ class GameViewModel : ViewModel(){
         if (wordList.isNotEmpty()) {
             //Select and remove a word from the list
             _word.value = wordList.removeAt(0)
-        }   else{
-            onGameFinish()
+        } else{
+            // Shuffle the word list, if the list is empty
+            resetList()
         }
     }
 
@@ -69,5 +93,24 @@ class GameViewModel : ViewModel(){
     fun onCorrect() {
         _score.value = score.value?.plus(1)
         nextWord()
+    }
+
+    companion object{
+
+        // Time when the game is over
+        private const val DONE = 0L
+
+        // Countdown time interval
+        private const val ONE_SECOND = 1000L
+
+        // TOTAL time for the game
+        private const val COUNTDOWN_TIME = 60000L
+
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        // Cancel the timer
+        timer.cancel()
     }
 }
