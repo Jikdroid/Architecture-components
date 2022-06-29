@@ -1,9 +1,11 @@
 package com.example.android.guesstheword.screens.game
 
 import android.os.CountDownTimer
+import android.text.format.DateUtils
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 
 class GameViewModel : ViewModel(){
@@ -32,7 +34,14 @@ class GameViewModel : ViewModel(){
     val currentTime: LiveData<Long>
         get() = _currentTime
 
+    // The String Version of the current time
+    val currentTimeString = Transformations.map(currentTime){ time->
+        DateUtils.formatElapsedTime(time)
+    }
+
+
     private val timer: CountDownTimer
+
 
 
     private fun resetList() {
@@ -65,12 +74,13 @@ class GameViewModel : ViewModel(){
      * Moves to the next word in the list
      */
     private fun nextWord() {
-        if (wordList.isNotEmpty()) {
-            //Select and remove a word from the list
-            _word.value = wordList.removeAt(0)
-        } else{
-            // Shuffle the word list, if the list is empty
+        // Shuffle the word list, if the list is empty
+        if (wordList.isEmpty()) {
             resetList()
+            _word.value = wordList.removeAt(0)
+        } else {
+            // Remove a word from the list
+            _word.value = wordList.removeAt(0)
         }
     }
 
